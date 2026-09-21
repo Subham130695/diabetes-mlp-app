@@ -290,8 +290,8 @@ with center:
             }
             df_input = pd.DataFrame([input_dict])
 
-            age_group = pd.cut(df_input['Age'], bins=[20, 30, 40, 50, 60, 90],
-                                labels=['21-30', '31-40', '41-50', '51-60', '60+'])
+            age_group = pd.cut(df_input['Age'], bins=[0, 30, 40, 50, 60, 200],
+                    labels=['<=30', '31-40', '41-50', '51-60', '60+'])
             bmi_cat = 'Underweight' if bmi < 18.5 else 'Normal' if bmi < 25 else 'Overweight' if bmi < 30 else 'Obese'
             gluc_cat = 'Normal' if glucose < 100 else 'Prediabetic' if glucose < 126 else 'Diabetic_Range'
 
