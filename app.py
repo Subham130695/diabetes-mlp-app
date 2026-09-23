@@ -308,9 +308,20 @@ with center:
                 elif col.startswith('GlucoseCategory_'):
                     df_input[col] = int(gluc_cat == col.replace('GlucoseCategory_', ''))
 
-            df_input = df_input.reindex(columns=feature_columns, fill_value=0)
-            input_scaled = scaler.transform(df_input)
-            prob = model.predict(input_scaled, verbose=0)[0][0]
+           df_input = df_input.reindex(columns=feature_columns, fill_value=0)
+
+# scaler was fit only on continuous columns; one-hot columns stay unscaled
+continuous_cols = list(scaler.feature_names_in_)
+onehot_cols = [c for c in feature_columns if c not in continuous_cols]
+
+scaled_cont = pd.DataFrame(
+    scaler.transform(df_input[continuous_cols]),
+    columns=continuous_cols, index=df_input.index
+)
+input_scaled_df = pd.concat([scaled_cont, df_input[onehot_cols]], axis=1)[feature_columns]
+input_scaled = input_scaled_df.values
+
+prob = model.predict(input_scaled, verbose=0)[0][0]
             prediction = "Diabetic" if prob >= 0.5 else "Non-Diabetic"
 
             if prediction == "Diabetic":
